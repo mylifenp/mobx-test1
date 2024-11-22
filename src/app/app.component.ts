@@ -14,11 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   title = 'mobx-test1';
-  store = inject(RootStore) as IRootStore;
+  private readonly store = inject(RootStore) as IRootStore;
 
-  initialFavorites = {
-    name: 'Google',
-    link: 'https://www.google.com',
-    type: 'work',
-  };
+  readonly favoritesStore = this.store.favoritesStore;
 }

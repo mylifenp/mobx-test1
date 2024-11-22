@@ -1,16 +1,17 @@
 <div>
-  <h1>Welcome to {{ store.getABC() }}!</h1>
+  <h1>Welcome to {{ favoritesStore.firstFavoriteName }}!</h1>
 </div>
 <div>
-  @for(item of store.filteredFavorites; track item) {
+  @for(item of favoritesStore.filteredFavorites; track item) {
   <div>
     <h2>{{ item.name }}</h2>
-    <p>{{ item.name }}</p>
+    <p>{{ item.link }}</p>
+    <p>{{ item.type }}</p>
   </div>
   }
 </div>
 <div>
-  <button type="button" (click)="store.addFavorite(initialFavorites)">
+  <button type="button" (click)="favoritesStore.addFavorite()">
     ADD FAVORITE
   </button>
 </div>

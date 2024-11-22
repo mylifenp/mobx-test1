@@ -18,6 +18,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@faker-js/faker": "^9.2.0",
     "mobx": "^6.13.5",
     "mobx-angular": "^4.8.0",
     "mobx-devtools-mst": "^0.9.34",

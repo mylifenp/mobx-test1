@@ -1,20 +1,23 @@
 import { Instance, types } from 'mobx-state-tree';
 import { v4 as uuidv4 } from 'uuid';
+import { faker as faker } from '@faker-js/faker';
+import { Injectable } from '@angular/core';
+import makeInspectable from 'mobx-devtools-mst';
 
 declare global {
   interface Window {
     store: any;
   }
 }
-import { Injectable } from '@angular/core';
-import makeInspectable from 'mobx-devtools-mst';
+
+const typesEnum = ['work', 'personal', 'shared'];
 
 export const Favorite = types
   .model('Favourite', {
     id: types.identifier,
     name: types.string,
     link: types.string,
-    type: types.enumeration(['work', 'personal', 'shared']),
+    type: types.enumeration([...typesEnum]),
   })
   .actions((self) => ({}))
   .views((self) => ({}));
@@ -33,15 +36,21 @@ const FavoritesStore = types
         (favorite) => favorite.type === self.selectedFilter
       );
     },
-    getABC() {
-      return 'ABC';
+    get firstFavoriteName() {
+      return self.favorites.length ? self.favorites[0].name : '';
     },
   }))
   .actions((self) => ({
     removeFavorite(favorite: Favorite) {
       self.favorites.remove(favorite);
     },
-    addFavorite(favorite: Omit<Favorite, 'id'>) {
+    addFavorite(
+      favorite: Omit<Favorite, 'id'> = {
+        name: faker.company.name(),
+        link: faker.internet.url(),
+        type: faker.helpers.arrayElement(typesEnum),
+      }
+    ) {
       self.favorites.push({ ...favorite, id: uuidv4() });
     },
     setFilter(selectedValue: string) {
@@ -49,13 +58,18 @@ const FavoritesStore = types
     },
   }));
 
-export interface IRootStore extends Instance<typeof FavoritesStore> {}
+const RootStore = types.model('RootStore', {
+  favoritesStore: types.optional(FavoritesStore, {}),
+});
+
+export interface FavoritesStore extends Instance<typeof FavoritesStore> {}
 export interface Favorite extends Instance<typeof Favorite> {}
+export interface IRootStore extends Instance<typeof RootStore> {}
 
 @Injectable()
 export default class Store {
   constructor() {
-    let myStore = (window.store = FavoritesStore.create({}));
+    let myStore = (window.store = RootStore.create({}));
     makeInspectable(myStore);
     return myStore;
   }
